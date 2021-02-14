@@ -1,6 +1,5 @@
 const request = require('request');
 const readline = require('readline');
-const { table } = require('console');
 
 let baseUrl = 'http://localhost:3080';
 
@@ -45,7 +44,6 @@ const startGame = () => {
                             });
                     }, 5000);
                 });
-            // rl.close();
         });
     })
 }
@@ -72,7 +70,7 @@ const game = () => {
                 }
 
             });
-    }, 5000);
+    }, 3000);
 }
 
 const playerMove = () => {
@@ -81,7 +79,7 @@ const playerMove = () => {
         //TODO: make sure input is only 1-9
         request.post({
             headers: { 'content-type': 'application/json' },
-            url: `${baseUrl}/api/board`,
+            url: `${baseUrl}/api/game`,
             body: JSON.stringify(move)
         },
             function (error, response, body) {
@@ -121,7 +119,6 @@ const printTable = (table) => {
 }
 
 const getWinner = (winner) => {
-    printTable(table);
     if(winner.id == 1) {
         console.log(`FIVE IN A ROW!\nPlayer 1, ${winner.user}, is the winner!\nBetter luck next time Player 2.`);
     } else {
