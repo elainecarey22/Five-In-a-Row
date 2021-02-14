@@ -1,10 +1,12 @@
 const request = require('request');
 const readline = require('readline');
+const { table } = require('console');
+
+let baseUrl = 'http://localhost:3080';
 
 let gameState;
 let move;
 let playerId;
-let baseUrl = 'http://localhost:3080/';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -18,7 +20,7 @@ const startGame = () => {
             var player = { user: name };
             request.post({
                 headers: { 'content-type': 'application/json' },
-                url: `${baseUrl}api/user`,
+                url: `${baseUrl}/api/user`,
                 body: JSON.stringify(player)
             },
                 function (error, response, body) {
@@ -26,11 +28,11 @@ const startGame = () => {
                     // Continuous request to check state of game
                     const requestLoop = setInterval(function () {
                         request.get({
-                            url: `${baseUrl}api/game`
+                            url: `${baseUrl}/api/game`
                         },
                             function (error, response, body) {
                                 gameState = JSON.parse(body);
-                                if (gameState.ready === false) {              
+                                if (gameState.ready === false) {
                                     console.log('Waiting on another player to join...');
                                 } else {
                                     // TODO: fix logic to stop the below message from displaying when more than 2 players have joined
@@ -51,17 +53,22 @@ const startGame = () => {
 const game = () => {
     const requestLoop = setInterval(function () {
         request.get({
-            url: `${baseUrl}api/game`
+            url: `${baseUrl}/api/game`
         },
             function (error, response, body) {
                 gameState = JSON.parse(body);
-                if (gameState.playerTurn == playerId) {
+                if (gameState.winner) {
+                    printTable(gameState.table);
+                    getWinner(gameState.winner);
+                    clearInterval(requestLoop);
+                }
+                else if (gameState.playerTurn == playerId) {
                     console.log('Your turn');
                     printTable(gameState.table);
                     playerMove();
                     clearInterval(requestLoop);
                 } else {
-                    console.log('Other players turn');
+                    console.log('Other players turn...');
                 }
 
             });
@@ -74,13 +81,19 @@ const playerMove = () => {
         //TODO: make sure input is only 1-9
         request.post({
             headers: { 'content-type': 'application/json' },
-            url: `${baseUrl}api/board`,
+            url: `${baseUrl}/api/board`,
             body: JSON.stringify(move)
         },
             function (error, response, body) {
                 let gameState = JSON.parse(body);
-                printTable(gameState.table);
-                game();
+                if (gameState.winner) {
+                    printTable(gameState.table);
+                    getWinner(gameState.winner);
+                }
+                else {
+                    printTable(gameState.table);
+                    game();
+                }
             })
     });
 }
@@ -103,14 +116,24 @@ const printTable = (table) => {
                 rowStr += '[ ]';
             }
         }
-        console.log(rowStr)
+        console.log(rowStr);
     }
+}
+
+const getWinner = (winner) => {
+    printTable(table);
+    if(winner.id == 1) {
+        console.log(`FIVE IN A ROW!\nPlayer 1, ${winner.user}, is the winner!\nBetter luck next time Player 2.`);
+    } else {
+        console.log(`FIVE IN A ROW!\nPlayer 2, ${winner.user}, is the winner!\n Better luck next time Player 1.`);
+    }
+        
+    // end conditional, close out of game - search node js documentation how to do this
 }
 
 const main = async () => {
     await startGame()
     game();
-    // rl.close()
 }
 
 main()
