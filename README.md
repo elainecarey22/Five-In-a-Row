@@ -15,6 +15,6 @@ Global install of npm:
 7. Start first client with the command 'node client.js'
 8. Start second client in another terminal window to allow the game to start.
 
-### To do
-This project is not complete and needs the following to be implemented:
-1. Testing framework (Jest will be used).
+## Tests
+Jest is the testing framework used for unit tests.
+To run these tests, navigate to the server folder and run 'npm test'.
