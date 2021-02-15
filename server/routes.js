@@ -1,12 +1,11 @@
 const router = require('express').Router();
 const gameTable = [[], [], [], [], [], [], [], [], []];
-
-module.exports = router;
 gameState = { ready: false, users: [], playerTurn: null, table: gameTable, winner: null };
 
-
+// put player token into game board within the player specified column
 function gameMove(column, value) {
-    gameState.table[column].push(value);
+   gameState.table[column].push(value);
+   return gameState.table;
 }
 
 /*
@@ -28,7 +27,6 @@ function checkWinner(t) {
         for (r = 0; r < 7; r++)
             if (checkLine(t[c][r], t[c + 1][r], t[c + 2][r], t[c + 3][r], t[c + 4][r])) {
                 let winner = t[c][r];
-                alertWinner(winner);
                 return winner;
             }
 
@@ -37,7 +35,6 @@ function checkWinner(t) {
         for (r = 0; r < 3; r++)
             if (checkLine(t[c][r], t[c][r + 1], t[c][r + 2], t[c][r + 3], t[c][r + 4])) {
                 let winner = t[c][r];
-                alertWinner(winner);
                 return winner;
             }
 
@@ -46,7 +43,6 @@ function checkWinner(t) {
         for (r = 0; r < 7; r++)
             if (checkLine(t[c][r], t[c + 1][r + 1], t[c + 2][r + 2], t[c + 3][r + 3], t[c + 4][r + 4])) {
                 let winner = t[c][r];
-                alertWinner(winner);
                 return winner;
             }
 
@@ -55,7 +51,6 @@ function checkWinner(t) {
         for (r = 0; r < 4; r++)
             if (checkLine(t[c][r], t[c - 1][r + 1], t[c - 2][r + 2], t[c - 3][r + 3], t[c - 4][r + 4])) {
                 let winner = t[c][r];
-                alertWinner(winner);
                 return winner;
             }
 
@@ -69,7 +64,7 @@ function alertWinner(winner) {
     else {
         gameState.winner = gameState.users[1];
     }
-    // call end game function here?
+    return gameState.winner;
 }
 
 router.post('/user', (req, res) => {
@@ -112,6 +107,11 @@ router.post('/game', (req, res) => {
         gameMove(playerMove.column - 1, "O");
         gameState.playerTurn = 1;
     }
-    checkWinner(gameState.table);
+    const winner = checkWinner(gameState.table);
+    if(winner !== 0) {
+        alertWinner(winner)
+    }
     res.send(gameState);
 });
+
+module.exports = { routes:router, gameMove, checkWinner, checkLine, alertWinner };

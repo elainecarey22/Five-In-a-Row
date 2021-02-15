@@ -18,4 +18,3 @@ Global install of npm:
 ### To do
 This project is not complete and needs the following to be implemented:
 1. Testing framework (Jest will be used).
-2. Game winning logic.
