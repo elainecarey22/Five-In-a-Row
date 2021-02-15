@@ -64,7 +64,10 @@ test('check game board returns 0 when there is no winner', () => {
     expect(checkWinner(board)).toBe(0);
 });
 
-// test('winner is assigned to user based on their game token', () => {
-//     winner = { id: 2, user: 'test' };
-//     expect(alertWinner('O')).toEqual(winner);
-// })
+test('winner is assigned to user based on their game token', () => {
+    loser = { id: 1, user: 'player1'};
+    gameState.winner = { id: 2, user: 'player2' };
+
+    expect(alertWinner('O')).toEqual(gameState.winner);
+    expect(alertWinner('O')).not.toBe(loser);
+})

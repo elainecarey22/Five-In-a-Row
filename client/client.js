@@ -124,8 +124,6 @@ const getWinner = (winner) => {
     } else {
         console.log(`FIVE IN A ROW!\nPlayer 2, ${winner.user}, is the winner!\n Better luck next time Player 1.`);
     }
-        
-    // end conditional, close out of game - search node js documentation how to do this
 }
 
 const main = async () => {
@@ -134,10 +132,3 @@ const main = async () => {
 }
 
 main()
-
-// TODO: use below SIGINT event to listen for player who wants to exit
-// rl.on('SIGINT', () => {
-//     rl.question('Are you sure you want to exit? ', (answer) => {
-//         if (answer.match(/^y(es)?$/i)) rl.pause();
-//     });
-// });
