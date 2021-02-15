@@ -18,3 +18,8 @@ Global install of npm:
 ## Tests
 Jest is the testing framework used for unit tests.
 To run these tests, navigate to the server folder and run 'npm test'.
+
+### To do
+More robust validation for user input needs to be added, in order to handle adverse events eg:
+* More than 2 users enter the game
+* Characters other than 1-9 are entered by the user when prompted to submit move
